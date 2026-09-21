@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CORE_REPO: dashflowx/dashflowx-core
+
+jobs:
+  verify:
+    name: Lint / test / pack inspect
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout datagrid
+        uses: actions/checkout@v4
+        with:
+          path: dashflow-datagrid
+
+      - name: Checkout sibling core for file peer
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.CORE_REPO }}
+          path: dashflowx-core
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: yarn
+          cache-dependency-path: dashflow-datagrid/yarn.lock
+
+      - name: Install and build sibling @dashflowx/core
+        working-directory: dashflowx-core
+        run: |
+          yarn install --frozen-lockfile
+          yarn build
+
+      - run: yarn install --frozen-lockfile
+        working-directory: dashflow-datagrid
+      - run: yarn test
+        working-directory: dashflow-datagrid
+      - run: yarn lint
+        working-directory: dashflow-datagrid
+      - run: yarn build
+        working-directory: dashflow-datagrid
+      - name: Inspect free tarball (no src/pro)
+        working-directory: dashflow-datagrid
+        run: node scripts/pack-inspect.mjs .
+      - name: Inspect pro tarball
+        working-directory: dashflow-datagrid
+        run: node scripts/pack-inspect.mjs datagrid-pro

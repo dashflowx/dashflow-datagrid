@@ -1,0 +1,29 @@
+{
+  "name": "@dashflowx/datagrid-pro",
+  "version": "0.1.0",
+  "description": "Pro datagrid features. Publish only to GitHub Packages.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dashflowx/dashflow-datagrid.git"
+  },
+  "type": "module",
+  "files": ["dist"],
+  "main": "dist/index.umd.js",
+  "module": "dist/index.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.js"
+    }
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "peerDependencies": {
+    "@dashflowx/datagrid": ">=0.1.0",
+    "@dashflowx/core": ">=3.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "license": "UNLICENSED"
+}
