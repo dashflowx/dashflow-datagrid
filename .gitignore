@@ -5,3 +5,4 @@ storybook-static
 *.tgz
 .DS_Store
 coverage
+.next
