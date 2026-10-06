@@ -18,6 +18,8 @@ export type VirtualScrollGridVariant = ProDashflowGridVariant;
  * Forwards the same variant / size / pin / edit props as ProDashflowGrid.
  */
 export function VirtualScrollGrid({
+  columns,
+  rows,
   rowCount = 200,
   height = 280,
   pinName = true,
@@ -34,6 +36,8 @@ export function VirtualScrollGrid({
   return (
     <ProDashflowGrid
       mode="virtual"
+      columns={columns}
+      rows={rows}
       rowCount={rowCount}
       height={height}
       pinName={pinName}

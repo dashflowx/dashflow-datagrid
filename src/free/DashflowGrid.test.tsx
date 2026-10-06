@@ -28,6 +28,76 @@ describe('DashflowGrid G03', () => {
     expect(screen.getAllByRole('cell')[1]).toHaveTextContent('Tim');
   });
 
+  it('shows a sort indicator on every sortable header before sorting', async () => {
+    const user = userEvent.setup();
+    renderGrid();
+    const indicators = screen.getAllByTestId('sort-indicator');
+    expect(indicators.length).toBeGreaterThan(0);
+    for (const el of indicators) expect(el).toHaveTextContent('↕');
+    await user.click(screen.getByRole('button', { name: /^Name/ }));
+    expect(screen.getByRole('button', { name: /^Name/ })).toHaveTextContent('Name↑');
+  });
+
+  it('only sortable columns get a sort button and aria-sort', async () => {
+    const user = userEvent.setup();
+    render(
+      <DashflowGrid
+        columns={[
+          { key: 'name', header: 'Name' },
+          { key: 'role', header: 'Role', sortable: false },
+        ]}
+        rows={PEOPLE}
+        pageSize={5}
+      />,
+    );
+    expect(screen.queryByRole('button', { name: /^Role/ })).not.toBeInTheDocument();
+    const roleHead = screen.getByRole('columnheader', { name: 'Role' });
+    expect(roleHead).not.toHaveAttribute('aria-sort');
+    expect(screen.getByRole('columnheader', { name: 'Select all rows on this page' })).not.toHaveAttribute(
+      'aria-sort',
+    );
+    const nameHead = screen.getByRole('columnheader', { name: /^Name/ });
+    expect(nameHead).toHaveAttribute('aria-sort', 'none');
+    await user.click(screen.getByRole('button', { name: /^Name/ }));
+    expect(nameHead).toHaveAttribute('aria-sort', 'ascending');
+    await user.click(roleHead);
+    expect(nameHead).toHaveAttribute('aria-sort', 'ascending');
+  });
+
+  it('drops an active sort when its column becomes unsortable', async () => {
+    const user = userEvent.setup();
+    const sortableCols = [
+      { key: 'name' as const, header: 'Name' },
+      { key: 'role' as const, header: 'Role' },
+    ];
+    const { rerender } = render(
+      <DashflowGrid columns={sortableCols} rows={PEOPLE} pageSize={20} />,
+    );
+    const firstName = () => screen.getAllByRole('cell')[1].textContent;
+    const unsorted = firstName();
+    await user.click(screen.getByRole('button', { name: /^Name/ }));
+    await user.click(screen.getByRole('button', { name: /^Name/ }));
+    expect(firstName()).toBe('Tim');
+    rerender(
+      <DashflowGrid
+        columns={[{ ...sortableCols[0], sortable: false }, sortableCols[1]]}
+        rows={PEOPLE}
+        pageSize={20}
+      />,
+    );
+    expect(firstName()).toBe(unsorted);
+    expect(screen.getByRole('columnheader', { name: 'Name' })).not.toHaveAttribute('aria-sort');
+  });
+
+  it('returns to page 1 when the sort changes', async () => {
+    const user = userEvent.setup();
+    renderGrid();
+    await user.click(screen.getByRole('button', { name: 'Next' }));
+    expect(screen.getByTestId('page-status')).toHaveTextContent('Page 2 of 3');
+    await user.click(screen.getByRole('button', { name: /^Name/ }));
+    expect(screen.getByTestId('page-status')).toHaveTextContent('Page 1 of 3');
+  });
+
   it('pages client-side without a backend', async () => {
     const user = userEvent.setup();
     renderGrid();

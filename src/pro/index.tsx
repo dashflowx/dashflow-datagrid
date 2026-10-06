@@ -1,5 +1,8 @@
 export {
   ProDashflowGrid,
+  type ProDashflowGridColumn,
+  type ProDashflowGridFetchPageArgs,
+  type ProDashflowGridFetchPageResult,
   type ProDashflowGridMode,
   type ProDashflowGridProps,
   type ProDashflowGridSize,

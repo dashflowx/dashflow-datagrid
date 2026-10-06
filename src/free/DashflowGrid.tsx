@@ -53,10 +53,10 @@ const VARIANT_SHELL: Record<DashflowGridVariant, string> = {
 };
 
 const VARIANT_HEAD: Record<DashflowGridVariant, string> = {
-  default: 'bg-slate-50',
-  bordered: 'bg-white',
-  muted: 'bg-slate-100',
-  striped: 'bg-slate-50',
+  default: 'bg-slate-50 text-slate-700',
+  bordered: 'bg-white text-slate-700',
+  muted: 'bg-slate-100 text-slate-700',
+  striped: 'bg-slate-50 text-slate-700',
   flush: 'bg-transparent',
 };
 
@@ -142,10 +142,16 @@ export function DashflowGrid<T extends Record<string, unknown>>({
     return enableSelection ? [selectCol, ...dataCols] : dataCols;
   }, [columns, enableSelection]);
 
+  const activeSorting = useMemo(
+    () =>
+      sorting.filter((s) => columns.some((col) => col.key === s.id && col.sortable !== false)),
+    [sorting, columns],
+  );
+
   const table = useReactTable({
     data: rows,
     columns: columnDefs,
-    state: { sorting, pagination, rowSelection },
+    state: { sorting: activeSorting, pagination, rowSelection },
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     onRowSelectionChange: (updater) => {
@@ -227,17 +233,30 @@ export function DashflowGrid<T extends Record<string, unknown>>({
                   <Th
                     key={header.id}
                     aria-sort={
-                      sorted === 'asc' ? 'ascending' : sorted === 'desc' ? 'descending' : 'none'
+                      !canSort
+                        ? undefined
+                        : sorted === 'asc'
+                          ? 'ascending'
+                          : sorted === 'desc'
+                            ? 'descending'
+                            : 'none'
                     }
                   >
                     {header.isPlaceholder ? null : canSort ? (
                       <button
                         type="button"
-                        className="font-bold"
+                        className="inline-flex cursor-pointer items-center gap-1 rounded font-bold hover:underline focus-visible:outline focus-visible:outline-2"
                         onClick={header.column.getToggleSortingHandler()}
+                        title={`Sort by ${String(header.column.columnDef.header)}`}
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
-                        {sorted === 'asc' ? ' ↑' : sorted === 'desc' ? ' ↓' : ''}
+                        <span
+                          aria-hidden
+                          data-testid="sort-indicator"
+                          className={sorted ? '' : 'opacity-50'}
+                        >
+                          {sorted === 'asc' ? '↑' : sorted === 'desc' ? '↓' : '↕'}
+                        </span>
                       </button>
                     ) : (
                       flexRender(header.column.columnDef.header, header.getContext())

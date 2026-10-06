@@ -7,7 +7,9 @@
     "url": "git+https://github.com/dashflowx/dashflow-datagrid.git"
   },
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "dist/index.umd.js",
   "module": "dist/index.es.js",
   "exports": {
