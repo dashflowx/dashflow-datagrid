@@ -58,4 +58,23 @@ describe('DashflowGrid G03', () => {
     expect(csv).not.toContain('Tim');
     expect(csv.split('\n').filter(Boolean)).toHaveLength(6);
   });
+
+  it('applies variant, size, and selection toggle', () => {
+    render(
+      <DashflowGrid
+        columns={columns}
+        rows={PEOPLE.slice(0, 3)}
+        pageSize={5}
+        variant="bordered"
+        size="sm"
+        enableSelection={false}
+        showToolbar={false}
+      />,
+    );
+    const root = screen.getByTestId('dashflow-grid');
+    expect(root.className).toContain('border-slate-200');
+    expect(root.className).toContain('text-xs');
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Export CSV' })).not.toBeInTheDocument();
+  });
 });

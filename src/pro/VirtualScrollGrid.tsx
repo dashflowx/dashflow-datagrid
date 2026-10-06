@@ -1,6 +1,48 @@
-import { ProDashflowGrid } from './ProDashflowGrid';
+import {
+  ProDashflowGrid,
+  type ProDashflowGridProps,
+  type ProDashflowGridSize,
+  type ProDashflowGridVariant,
+} from './ProDashflowGrid';
 
-/** @deprecated Use ProDashflowGrid mode="virtual". Kept as the original G01 stub name. */
-export function VirtualScrollGrid() {
-  return <ProDashflowGrid mode="virtual" rowCount={200} height={280} />;
+export type VirtualScrollGridProps = Omit<ProDashflowGridProps, 'mode'> & {
+  /** Always `virtual`. Prefer `ProDashflowGrid mode="virtual"`. */
+  mode?: 'virtual';
+};
+
+export type VirtualScrollGridSize = ProDashflowGridSize;
+export type VirtualScrollGridVariant = ProDashflowGridVariant;
+
+/**
+ * @deprecated Use `ProDashflowGrid mode="virtual"`. Kept as the original G01 stub name.
+ * Forwards the same variant / size / pin / edit props as ProDashflowGrid.
+ */
+export function VirtualScrollGrid({
+  rowCount = 200,
+  height = 280,
+  pinName = true,
+  inlineEdit = false,
+  variant = 'default',
+  size = 'md',
+  showMeta = true,
+  className = '',
+  pageSize,
+  mode: _mode = 'virtual',
+  ...rest
+}: VirtualScrollGridProps) {
+  return (
+    <ProDashflowGrid
+      mode="virtual"
+      rowCount={rowCount}
+      height={height}
+      pinName={pinName}
+      inlineEdit={inlineEdit}
+      variant={variant}
+      size={size}
+      showMeta={showMeta}
+      className={className}
+      pageSize={pageSize}
+      {...rest}
+    />
+  );
 }

@@ -24,6 +24,17 @@ const columns = [
 const meta: Meta<typeof DashflowGrid> = {
   title: 'Datagrid/Free',
   component: DashflowGrid,
+  tags: ['autodocs'],
+  argTypes: {
+    variant: {
+      control: 'select',
+      options: ['default', 'bordered', 'muted', 'striped', 'flush'],
+    },
+    size: {
+      control: 'select',
+      options: ['sm', 'md', 'lg'],
+    },
+  },
 };
 
 export default meta;
@@ -35,5 +46,28 @@ export const SortPageSelectCsv: Story = {
     rows: PEOPLE,
     pageSize: 5,
     caption: 'People (in-memory, G03)',
+    variant: 'default',
+    size: 'md',
+  },
+};
+
+export const BorderedCompact: Story = {
+  args: {
+    columns,
+    rows: PEOPLE,
+    pageSize: 5,
+    caption: 'People bordered',
+    variant: 'bordered',
+    size: 'sm',
+  },
+};
+
+export const NoSelection: Story = {
+  args: {
+    columns,
+    rows: PEOPLE.slice(0, 5),
+    pageSize: 5,
+    enableSelection: false,
+    caption: 'People no select',
   },
 };

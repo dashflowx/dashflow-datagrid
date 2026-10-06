@@ -1,4 +1,4 @@
-export { DashflowGrid, type DashflowGridColumn, type DashflowGridProps } from './DashflowGrid';
+export { DashflowGrid, type DashflowGridColumn, type DashflowGridProps, type DashflowGridSize, type DashflowGridVariant } from './DashflowGrid';
 export { rowsToCsv, csvCell, type GridColumn } from './csv';
 export { Table, Tr, Th, Td, table, tr, th, td } from './table';
 export {
