@@ -27,9 +27,10 @@ export function VirtualScrollGrid({
   showMeta = true,
   className = '',
   pageSize,
-  mode: _mode = 'virtual',
+  mode,
   ...rest
 }: VirtualScrollGridProps) {
+  void mode;
   return (
     <ProDashflowGrid
       mode="virtual"
